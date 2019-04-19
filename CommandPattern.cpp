@@ -9,7 +9,7 @@ class OderCommand {
         OderCommand(){}
         virtual ~OderCommand(){}
         virtual void execute() = 0;
-    
+        virtual string toString() = 0;
 };
 
 class PizzaChefReceiver{
@@ -73,11 +73,8 @@ class WaiterInvoke{
     public:
         WaiterInvoke(){}
         ~WaiterInvoke(){}
-        void takeOderPizza(PizzaConcreteCommand *m_oder){
-            cout << "Waiter take new order " << m_oder->toString() << "\n";
-            m_oder->execute();
-        }
-        void takeOderSteak(SteakConcreteCommand *m_oder){
+
+        void takeOder(OderCommand *m_oder){
             cout << "Waiter take new order " << m_oder->toString() << "\n";
             m_oder->execute();
         }
@@ -86,22 +83,29 @@ class WaiterInvoke{
 class CustomerClient{
     public:
         WaiterInvoke *waiter;
+        OderCommand *oders;
+
         CustomerClient(){}
-        ~CustomerClient(){}
+        ~CustomerClient(){
+            if(waiter != NULL){
+                delete waiter;
+            }
+            if(oders != NULL){
+                delete oders;
+            }
+        }
         CustomerClient(WaiterInvoke *m_waiter){
             waiter = m_waiter;
         }
 
         void request(string requests){
-            PizzaConcreteCommand *oderspizza;
-            SteakConcreteCommand *oderssteak;
             if(requests.compare("pizza") == 0){
-                oderspizza = new PizzaConcreteCommand();
-                waiter->takeOderPizza(oderspizza);
+                oders = new PizzaConcreteCommand();
+                waiter->takeOder(oders);
             }
             else {
-                oderssteak = new SteakConcreteCommand();
-                waiter->takeOderSteak(oderssteak);
+                oders = new SteakConcreteCommand();
+                waiter->takeOder(oders);
             }
         }
 };
